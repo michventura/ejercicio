@@ -23,16 +23,42 @@ body {
 
 ul {
   margin: 0;
-  padding-inline: 0;
+  padding-inline: 2.5ch;
 }
 
 li {
-  list-style: none;
+  list-style-type: '🌀 ';
 }
 
 img,
 picture {
   max-width: 100%;
   display: block;
+}
+
+button {
+  margin: 0;
+  padding: 0;
+  padding-inline: 1ch;
+  transform: translatey(2px);
+  border: none;
+  background-color: transparent;
+  text-align: none;
+  cursor: pointer;
+}
+
+form {
+  display: flex;
+  gap: 1ch;
+  padding-block: 2ch;
+}
+
+.container {
+  border: 2px solid lightgray;
+  border-radius: 1ch;
+  max-width: 60ch;
+  margin: 5vh auto;
+  padding-block: 1ch 2ch;
+  padding-inline: 2ch;
 }
 

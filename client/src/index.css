@@ -4,6 +4,10 @@
   box-sizing: border-box;
 }
 
+*:focus {
+  outline-color: #93c5fd;
+}
+
 body,
 h1,
 h2,
@@ -13,7 +17,15 @@ h5,
 p,
 figure,
 picture {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: #374151;
   margin: 0;
+}
+
+h1 {
+  font-size: 1.75rem;
+  font-weight: 400;
 }
 
 body {
@@ -23,11 +35,60 @@ body {
 
 ul {
   margin: 0;
-  padding-inline: 0;
+  padding-inline: 3ch;
 }
 
 li {
-  list-style: none;
+  list-style-type: "📌";
+  border-bottom: 2px solid lightgray;
+  padding: 0.75ch;
+  margin-block-end: 1rem;
+}
+
+ul li {
+  position: relative;
+  padding-inline: 1ch;
+  transition: all 0.2s ease-in-out;
+}
+
+li:hover {
+  background-color: #fef3c7;
+}
+
+li:has(.delete-button:hover) {
+  opacity: 0.9;
+  background-color: #fee2e2;
+  border-color: #ef4444;
+}
+
+li:has(.highlight-checkbox:checked) {
+  list-style-type: "❗";
+}
+
+li:has(.highlight-checkbox:checked:hover) {
+  background-color: #fde68a;
+}
+
+li:has(.highlight) {
+  color: #000000;
+  background-color: #fcd34d;
+  border-color: #000000;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+li:focus-within {
+  outline: 2px solid #93c5fd;
+  outline-offset: -1px;
+  background-color: #fde68a;
+}
+
+li:has(.highlight) {
+  background-color: #fcd34d;
+}
+
+li:has(button:focus) {
+  outline: none;
+  background-color: #fee2e2;
 }
 
 img,
@@ -36,3 +97,74 @@ picture {
   display: block;
 }
 
+button {
+  margin: 0;
+  border: none;
+  background-color: transparent;
+  text-align: none;
+}
+
+button:not(:disabled) {
+  cursor: pointer;
+}
+
+input[type="checkbox"] {
+  line-height: 1;
+  vertical-align: middle;
+}
+
+input[type="checkbox"]:hover {
+  cursor: pointer;
+}
+
+input[type="checkbox"]:after {
+  position: absolute;
+  content: "";
+  inset: 0;
+}
+
+form {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: auto max-content;
+  padding-block: 3ch;
+}
+
+form input {
+  color: #4b5563;
+  border: 2px solid lightgray;
+  padding: 0.65ch;
+  margin-inline: 1.5ch;
+  border-radius: 0.3ch;
+  font-size: 1rem;
+}
+
+.container {
+  border: 2px solid lightgray;
+  border-radius: 1ch;
+  max-width: 80ch;
+  margin: auto;
+  margin-top: 3vmin;
+  padding: 3ch 2ch;
+}
+
+.highlight-checkbox {
+  margin: 0;
+  white-space: nowrap;
+  appearance: none;
+}
+
+.delete-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translateX(4.5ch);
+}
+
+.empty {
+  color: #757b84;
+  position: relative;
+  padding-inline: 1ch;
+  text-indent: 1ch;
+  font-style: italic;
+}

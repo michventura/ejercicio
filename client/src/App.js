@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import io from "socket.io-client";
 import { addMessage, highlightMessage, deleteMessage } from "./services";
 import { useLocalStorage } from "./hooks";
@@ -9,10 +9,25 @@ const socket = io("http://localhost:4000");
 function App() {
   const dispatch = useDispatch();
   const [storedMessages, setStoredMessages] = useLocalStorage("messages", []);
-  const { messages } = useSelector((state) => ({
-    messages: storedMessages,
-  }));
   const [message, setMessage] = React.useState("");
+
+  React.useEffect(() => {
+    const handleStorageChange = (event) => {
+      if (
+        event.storageArea === window.localStorage &&
+        event.key === "messages"
+      ) {
+        const newValue = event.newValue ? JSON.parse(event.newValue) : [];
+        setStoredMessages(newValue);
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, [setStoredMessages]);
 
   const handleAddMessage = (e) => {
     e.preventDefault();
@@ -44,57 +59,6 @@ function App() {
     setStoredMessages(storedMessages.filter((message) => message.id !== id));
   };
 
-  const addMessageListener = React.useCallback(
-    (message) => {
-      dispatch(addMessage(message));
-      const newMessage = { id: Date.now(), body: message, highlighted: false };
-      setStoredMessages((prevMessages) => [...prevMessages, newMessage]);
-    },
-    [dispatch, setStoredMessages]
-  );
-
-  const highlightMessageListener = React.useCallback(
-    (id) => {
-      dispatch(highlightMessage(id));
-      setStoredMessages((prevMessages) =>
-        prevMessages.map((message) =>
-          message.id === id
-            ? { ...message, highlighted: !message.highlighted }
-            : message
-        )
-      );
-    },
-    [dispatch, setStoredMessages]
-  );
-
-  const deleteMessageListener = React.useCallback(
-    (id) => {
-      dispatch(deleteMessage(id));
-      setStoredMessages((prevMessages) =>
-        prevMessages.filter((message) => message.id !== id)
-      );
-    },
-    [dispatch, setStoredMessages]
-  );
-
-  React.useEffect(() => {
-    socket.on("addMessage", addMessageListener);
-    socket.on("highlightMessage", highlightMessageListener);
-    socket.on("deleteMessage", deleteMessageListener);
-
-    return () => {
-      socket.off("addMessage", addMessageListener);
-      socket.off("highlightMessage", highlightMessageListener);
-      socket.off("deleteMessage", deleteMessageListener);
-    };
-  }, [
-    // dispatch,
-    // setStoredMessages,
-    addMessageListener,
-    highlightMessageListener,
-    deleteMessageListener,
-  ]);
-
   return (
     <div className="container">
       <h1>📝 Notas</h1>
@@ -109,9 +73,9 @@ function App() {
           ️💾
         </button>
       </form>
-      {messages.length === 0 && <p className="empty">No hay notas...</p>}
+      {storedMessages.length === 0 && <p className="empty">No hay notas...</p>}
       <ul>
-        {[...messages].reverse().map((message) => (
+        {[...storedMessages].reverse().map((message) => (
           <li key={message.id}>
             <input
               className="highlight-checkbox"
